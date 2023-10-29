@@ -1,0 +1,5 @@
+﻿  main.cpp
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(167,42): warning C4244: '=': conversion from 'Uint64' to 'int', possible loss of data
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(201,40): warning C4244: '=': conversion from 'Uint64' to 'int', possible loss of data
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(211): warning C4715: 'SDL_main': not all control paths return a value
+  LinkageSim.vcxproj -> C:\Users\adria\Desktop\VS\LinkageSim\x64\Debug\LinkageSim.exe
