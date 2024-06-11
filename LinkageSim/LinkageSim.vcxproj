@@ -133,13 +133,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="LinkageObjects.cpp" />
+    <ClCompile Include="LinkageSim.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SDLEssentials.cpp" />
     <ClCompile Include="Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LinkageObjects.h" />
+    <ClInclude Include="LinkageSim.h" />
     <ClInclude Include="MathConsts.h" />
     <ClInclude Include="SDLEssentials.h" />
     <ClInclude Include="Vector.h" />

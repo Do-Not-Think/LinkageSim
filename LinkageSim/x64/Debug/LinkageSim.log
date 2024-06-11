@@ -1,2 +1,23 @@
-﻿  LinkageObjects.cpp
+﻿  main.cpp
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(105,21): warning C4244: 'initializing': conversion from 'Uint64' to 'int', possible loss of data
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(198,42): warning C4244: '=': conversion from 'Uint64' to 'int', possible loss of data
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(216,61): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(216,53): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(216,45): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(216,37): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(221,61): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(221,53): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(221,45): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(221,37): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(225,61): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(225,53): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(225,45): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(225,37): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(241,171): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(241,158): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(241,105): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(241,47): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(274,40): warning C4244: '=': conversion from 'Uint64' to 'int', possible loss of data
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(284,42): warning C4244: '=': conversion from 'Uint64' to 'int', possible loss of data
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(297): warning C4715: 'SDL_main': not all control paths return a value
   LinkageSim.vcxproj -> C:\Users\adria\Desktop\VS\LinkageSim\x64\Debug\LinkageSim.exe

@@ -18,7 +18,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LinkageObjects.cpp">
+    <ClCompile Include="LinkageSim.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SDLEssentials.cpp">
@@ -29,7 +29,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LinkageObjects.h">
+    <ClInclude Include="LinkageSim.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MathConsts.h">
