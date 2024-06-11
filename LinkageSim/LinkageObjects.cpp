@@ -1,7 +1,7 @@
 #include "LinkageObjects.h"
 
-#define NO_DELTA_TIME
-#define SET_DELTA_TIME 70'000
+//#define NO_DELTA_TIME
+#define SET_DELTA_TIME 10'000
 
 enum MotorState
 {
@@ -104,7 +104,7 @@ void updateAngle(Arm& motor, int period, int delta_time);
 double normalizedAngle(double angle);
 MotorState updateMotorArms(std::vector<Arm>& motors, std::vector<Arm>& arms, int motor_index);
 
-bool updateMotors(std::vector<Arm>& motors, std::vector<Arm>& arms, int period, int delta_time)
+bool updateMotors(std::vector<Arm>& motors, std::vector<Arm>& arms, int period, int delta_time)//change period to std::vector<int> period
 {
 	bool success{ true };
 
@@ -141,12 +141,12 @@ void updateAngle(Arm& motor,int period, int delta_time)
 	if(period != 0)
 	{
 #ifndef NO_DELTA_TIME
-		motor.last_delta_angle = 2.0 * PI * delta_time / static_cast<double>(period);
-		motor.angle += motor.last_delta_angle;
+		motor.previous_angle = motor.angle;
+		motor.angle += 2.0 * PI * delta_time / static_cast<double>(period);
 #endif
 #ifdef NO_DELTA_TIME
-		motor.last_delta_angle = 2.0 * PI * SET_DELTA_TIME / static_cast<double>(period);
-		motor.angle += motor.last_delta_angle;
+		motor.previous_angle = motor.angle; 
+		motor.angle += 2.0 * PI * SET_DELTA_TIME / static_cast<double>(period);
 #endif
 	}
 	motor.angle = normalizedAngle(motor.angle);
@@ -165,10 +165,11 @@ MotorState updateMotorArms(std::vector<Arm>& motors, std::vector<Arm>& arms, int
 {
 	MotorState motor_state{ MOTORSTATE_DEFAULT };
 	
+
 	Vector_2d motor_pos{ motors[motor_index].pos };
 	double motor_angle{ motors[motor_index].angle };
 	double motor_length{ motors[motor_index].length };
-	double motor_last_delta_angle{ motors[motor_index].last_delta_angle };
+	double motor_previous_angle{ motors[motor_index].previous_angle };
 	Vector_2d motor_end_pos{ motor_pos + polarToVector(motor_angle, motor_length) };
 	
 	for(int i{ 0 }; i < motors[motor_index].connected_arms.size(); ++i)
@@ -180,7 +181,7 @@ MotorState updateMotorArms(std::vector<Arm>& motors, std::vector<Arm>& arms, int
 		Vector_2d arm_pos{ arms[arm_index].pos };
 		double arm_angle{ arms[arm_index].angle };
 		double arm_length{ arms[arm_index].length };
-		double arm_last_delta_angle{ arms[arm_index].last_delta_angle };
+		double arm_previous_angle{ arms[arm_index].previous_angle };
 
 
 		//Make a new coordinate system centered around arm_pos
@@ -201,10 +202,13 @@ MotorState updateMotorArms(std::vector<Arm>& motors, std::vector<Arm>& arms, int
 			//Squashing
 			std::printf("\nupdateMotorArms: motors[%d], arm[%d], motor_end_pos is too close to arm_pos!\ndistance between them: %f\nminimum distance: %f\n", motor_index, arm_index, distance(motor_end_pos, arm_pos), squash_distance);
 			motor_state = MOTORSTATE_REVERSE;
-
+			
 			//Go back a step
-			motors[motor_index].angle -= motors[motor_index].last_delta_angle;
-			motor_angle = motors[motor_index].angle;
+			motors[motor_index].angle = motors[motor_index].previous_angle;
+			//motor_angle = motors[motor_index].angle;
+			arms[arm_index].angle = arms[arm_index].previous_angle;
+			//arm_angle = arms[arm_index].angle;
+			/*
 			//Reset everything
 			motor_end_pos = motor_pos + polarToVector(motor_angle, motor_length);
 			arm_pos = arms[arm_index].pos;
@@ -279,18 +283,23 @@ MotorState updateMotorArms(std::vector<Arm>& motors, std::vector<Arm>& arms, int
 				motors[motor_index].angle = normalizedAngle(motor_angle + coord_sys_angle);
 				motors[motor_index].last_delta_angle = motor_last_delta_angle;
 				arms[arm_index].angle = normalizedAngle(arm_angle + coord_sys_angle);
-				arms[arm_index].last_delta_angle = normalizedAngle(-arms[arm_index].last_delta_angle);
-			}
+				
+			}*/
 		}
 		else if(motor_end_pos.x > strech_distance)
 		{
 			//Streching
 			std::printf("\tupdateMotorArms: motors[%d], arm[%d], motor_end_pos is too far from arm_pos!\ndistance between them: %f\nmaximum distance: %f\n", motor_index, arm_index, distance(motor_end_pos, arm_pos), squash_distance);
-			motor_state = MOTORSTATE_STOP;
+			motor_state = MOTORSTATE_REVERSE;
+
+			//Go back a step
+			motors[motor_index].angle = motors[motor_index].previous_angle;
+			//motor_angle = motors[motor_index].angle;
+			arms[arm_index].angle = arms[arm_index].previous_angle;
+			//arm_angle = arms[arm_index].angle;
 		}
 		else
 		{
-			std::printf(".\n");
 			//We can now solve for end_pos
 			//new_arm_end_pos has to stay a fixed distance away from motor_arm_pos and a fixed distance away from motor_end_pos
 			new_arm_end_pos.x = arm_length * arm_length - rod_length * rod_length + motor_end_pos.x * motor_end_pos.x;
@@ -300,25 +309,28 @@ MotorState updateMotorArms(std::vector<Arm>& motors, std::vector<Arm>& arms, int
 			new_arm_end_pos.y = std::sqrt(arm_length * arm_length - new_arm_end_pos.x * new_arm_end_pos.x);
 
 			double new_angle_1 = std::atan2(+new_arm_end_pos.y, new_arm_end_pos.x);
-			double new_angle_2 = 3 * PI / 2.0 - new_angle_1;//= std::atan2(-new_arm_end_pos.y, new_arm_end_pos.x);
+			double new_angle_2 = std::atan2(-new_arm_end_pos.y, new_arm_end_pos.x);
 
 			double delta_angle_1 = new_angle_1 - arm_angle;
 			double delta_angle_2 = new_angle_2 - arm_angle;
 			
+			double previous_delta_angle{ arms[arm_index].angle - arms[arm_index].previous_angle };
+
+			double momentum = 1.0;
 			//check which one makes a delta_angle closer the the last_delta_angle
-			if(std::abs(normalizedAngle(arm_last_delta_angle - delta_angle_1)) < std::abs(normalizedAngle(arm_last_delta_angle - delta_angle_2)))
+			if(std::abs(normalizedAngle(momentum * previous_delta_angle - delta_angle_1)) < std::abs(normalizedAngle(momentum * previous_delta_angle - delta_angle_2)))
 			{
 				//delta_angle_1 is closer
-				arm_last_delta_angle = delta_angle_1;
+				previous_delta_angle = delta_angle_1;
 				arm_angle = new_angle_1;
 			}
 			else
 			{
 				//delta_angle_2 is closer;
-				arm_last_delta_angle = delta_angle_2;
+				previous_delta_angle = delta_angle_2;
 				arm_angle = new_angle_2;
 			}
-
+			arms[arm_index].previous_angle = arms[arm_index].angle;
 			arms[arm_index].angle = normalizedAngle(arm_angle + coord_sys_angle);
 
 			//UpdateArms()

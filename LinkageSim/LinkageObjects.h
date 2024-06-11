@@ -19,7 +19,7 @@ struct Arm
 	Vector_2d pos{};
 	double length{};
 	double angle{};
-	double last_delta_angle{};
+	double previous_angle{};
 };
 
 bool updateMotors(std::vector<Arm>& motors, std::vector<Arm>& arms, int period, int delta_time);

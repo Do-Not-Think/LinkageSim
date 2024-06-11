@@ -74,8 +74,8 @@ int main(int argc, char** argv)
 
 		int font_size{ 20 };
 
-		SDL_Color text_color{ 0x00, 0x00, 0x00, 0xff };
-		SDL_Color background_color{ 0xff, 0xff, 0xff, 0xff };
+		SDL_Color text_color{ 0xff, 0xff, 0xff, 0xff };
+		SDL_Color background_color{ 0x0, 0x0, 0x0, 0xff };
 
 		Texture text_texture;
 
@@ -91,38 +91,59 @@ int main(int argc, char** argv)
 
 		
 		//Linkage Objects
-		std::vector<Arm> arms{};
 		std::vector<Arm> motors{};
-		double scale = 2;
+		std::vector<Arm> arms{};
+		
+		Arm motor0{};
+		motor0.pos = Vector_2d{ 100, 400 };
+		motor0.length = 100;
+		motor0.angle = -PI / 2.0;
+		motor0.previous_angle = motor0.angle;
+		int motor0_period = 1 * ONE_SECOND_MOTOR_PERIOD;
+		double rod0_length{ 300 };
+		motor0.connected_arms.push_back(Index_RodLength{ 0, rod0_length });
+		motors.push_back(motor0);
 
 		Arm arm0{};
-		arm0.pos = Vector_2d{ scale * (60 + 2 * 20), 200 };
+		arm0.pos = Vector_2d{ 350, 400 };
 		arm0.angle = -PI / 2.0;
+		arm0.previous_angle = arm0.angle;
+		arm0.length = 200;
+		arms.push_back(arm0);
+
+		
+		
+
+		/*
+		double scale = 2;
+		Arm arm0{};
+		arm0.pos = Vector_2d{ scale * (60 + 2 * 20), 350 };
+		arm0.angle = -PI / 1;
 		arm0.length = scale * 2.5 * 20;
 		arms.push_back(arm0);
 
 		Arm motor0{};
-		motor0.pos = Vector_2d{ scale * 60, 200 };
+		motor0.pos = Vector_2d{ scale * 60, 350 };
 		motor0.length = scale * 20;
 		motor0.angle = -PI / 2.0;
-		int motor0_period = 30 * ONE_SECOND_MOTOR_PERIOD;
-		motor0.connected_arms.push_back(Index_RodLength{ 0, 50 });//     scale * 2.5 * 20 });
+		int motor0_period = 6 * ONE_SECOND_MOTOR_PERIOD;
+		double rod0_length{ 20 };
+		motor0.connected_arms.push_back(Index_RodLength{ 0, rod0_length });//     scale * 2.5 * 20 });
+		//motor0.connected_arms.push_back(Index_RodLength{ 0, scale * 2.5 * 20 });
 		motors.push_back(motor0);
-
+		*/
 
 		int ticks{ 1 };
-		int every_nth_tick{ 100 };
+		int every_nth_tick{ 40 };
 		int num_points{ 100 };
 		int point_i{ 0 };
-		std::vector<Vector_2d> points;
+		SDL_Point* points{ new SDL_Point[num_points] };
 
 
 		bool keysPressed{ false };
 
 		bool quit{ false };
 		SDL_Event e{};
-
-		SDL_StartTextInput();
 		while(!quit)
 		{
 			while(SDL_PollEvent(&e))
@@ -292,18 +313,32 @@ int main(int argc, char** argv)
 
 				updateMotor(motor, delta_time);
 			}*/
-			
+
+			static bool reverse{ false };
+
+
+			if(rod0_length < 10)
+				reverse = !reverse;
+			if(rod0_length > 150)
+				reverse = !reverse;
+			if(reverse)
+				rod0_length -= 0.02;
+			else
+				rod0_length += 0.02;
+			//motors[0].connected_arms[0] = Index_RodLength{ 0, rod0_length };
 			
 			updateMotors(motors, arms, motor0_period, delta_time);
-			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xff);
+	
 			
 			Vector_2d pos1{};
 			Vector_2d pos2{};
 			
 			//motor0 arm
+			SDL_SetRenderDrawColor(renderer, 0xff, 0, 0, 0xff);
 			pos1 = motors[0].pos;
 			pos2 = motors[0].pos + polarToVector(motors[0].angle, motors[0].length);
 			SDL_RenderDrawLine(renderer, pos1.x, pos1.y, pos2.x, pos2.y);
+			SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
 			//rod connecting motor0 and arm0 
 			pos1 = pos2;
 			pos2 = arms[0].pos + polarToVector(arms[0].angle, arms[0].length);
@@ -329,36 +364,47 @@ int main(int argc, char** argv)
 
 			SDL_RenderDrawLine(renderer, motors[0].pos.x + std::cos(motors[0].angle) * motors[0].length, motors[0].pos.y + std::sin(motors[0].angle) * motors[0].length, final_pos.x, final_pos.y);
 			
-			SDL_SetRenderDrawColor(renderer, 0xff, 0, 0, 0xff);
+
+			static int r = 7, g = 5, b = 2;
 			
+			SDL_SetRenderDrawColor(renderer, r, g, b, 0xff);
+			
+			++ticks;
 			if(ticks >= every_nth_tick)
 			{
-				if(points.size() < num_points)
+				++point_i;
+				ticks = 1;
+				if(point_i < num_points)
 				{
-					points.push_back(final_pos);
-					++point_i;
+					if(point_i == 0)
+						std::printf("");
+					points[point_i].x = final_pos.x;
+					points[point_i].y = final_pos.y;
 				}
 				else
 				{
-					if(point_i < num_points)
-					{
-						points[point_i] = final_pos;
-					}
-					else
-					{
-						point_i = 0;
-					}
+					point_i = 0;
 				}
-				ticks = 1;
+				
+				r += 2;
+				g += 5;
+				b += 7;
 			}
-			++ticks;
+			
 
-
-			for(auto& point : points)
+			static bool busted{ false };
+			if(point_i == num_points - 1)
+				busted = true;
+			if(busted)
 			{
-				SDL_RenderDrawPoint(renderer, point.x, point.y);
+				SDL_RenderDrawPoints(renderer, points, num_points);
+			}
+			else
+			{
+				SDL_RenderDrawPoints(renderer, points, point_i);
 			}
 
+			
 
 			SDL_SetRenderDrawColor(renderer, background_color.r, background_color.g, background_color.b, background_color.a);
 			
@@ -393,6 +439,9 @@ int main(int argc, char** argv)
 			delta_time = static_cast<int>(end_time - start_time);
 			fps = TICKS_PER_SECOND / double(delta_time);
 		}
+
+		delete[] points;
+		points = nullptr;
 
 		close(window, renderer);
 
