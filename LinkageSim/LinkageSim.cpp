@@ -2,6 +2,67 @@
 
 using namespace LinkageSim;
 
+bool isInRect(Vector_2d rect_center_pos, double rect_width, double rect_height, Vector_2d point)
+{
+	rect_center_pos.x -= rect_width / 2.0;
+	rect_center_pos.y -= rect_height / 2.0;
+	return (point.x >= rect_center_pos.x && point.x <= rect_center_pos.x + rect_width) && (point.y >= rect_center_pos.y && point.y <= rect_center_pos.y + rect_height);
+}
+
+Vector_2d cameraTranformedPos(const Camera& camera, double screen_width, double screen_height, Vector_2d pos)
+{
+	pos -= camera.center_pos;
+	pos.x *= screen_width / camera.width;
+	pos.y *= screen_height /camera.height;
+	pos.x += screen_width / 2.0;
+	pos.y += screen_height / 2.0;
+
+	return pos;
+}
+
+void renderGrid(SDL_Renderer* renderer, const Camera& camera, double screen_width, double screen_height, double grid_width, double grid_height, SDL_Color grid_color)
+{
+	SDL_SetRenderDrawColor(renderer, grid_color.r, grid_color.g, grid_color.b, grid_color.a);
+
+	Vector_2d pos1, pos2;
+	int gridlines{};
+	int starting_gridline{};
+
+	//Generating vertical lines
+	pos1.y = camera.center_pos.y - 1 * camera.height - grid_height; //Should go atleast one grid_width away, to ensure the grid stays rendered even when zoomed in
+	pos2.y = camera.center_pos.y + 1 * camera.height + grid_height;
+
+	gridlines = 2 + static_cast<int>(1.0 * camera.width) / static_cast<int>(grid_width); //There should be atleast two grids, to ensure the grid stays rendered even when zoomed in
+	starting_gridline = static_cast<int>(camera.center_pos.x - .5 * camera.width) / static_cast<int>(grid_width);
+	for(int i{ 0 }; i < gridlines; ++i)
+	{
+		pos1.x = (starting_gridline + i) * grid_width;
+		pos2.x = pos1.x;
+
+		Vector_2d screen_pos1 = cameraTranformedPos(camera, screen_width, screen_height, pos1);
+		Vector_2d screen_pos2 = cameraTranformedPos(camera, screen_width, screen_height, pos2);
+
+		SDL_RenderDrawLine(renderer, screen_pos1.x, screen_pos1.y, screen_pos2.x, screen_pos2.y);
+	}
+
+	//Generating horizontal lines
+	pos1.x = camera.center_pos.x - 1 * camera.width - grid_width;
+	pos2.x = camera.center_pos.x + 1 * camera.width + grid_width;
+
+	gridlines = 2 + static_cast<int>(1.0 * camera.height) / static_cast<int>(grid_height);
+	starting_gridline = static_cast<int>(camera.center_pos.y - .5 * camera.height) / static_cast<int>(grid_height);
+	for(int i{ 0 }; i < gridlines; ++i)
+	{
+		pos1.y = (starting_gridline + i) * grid_height;
+		pos2.y = pos1.y;
+
+		Vector_2d screen_pos1 = cameraTranformedPos(camera, screen_width, screen_height, pos1);
+		Vector_2d screen_pos2 = cameraTranformedPos(camera, screen_width, screen_height, pos2);
+
+		SDL_RenderDrawLine(renderer, screen_pos1.x, screen_pos1.y, screen_pos2.x, screen_pos2.y);
+	}
+}
+
 double normalizedAngle(double angle)
 {
 	while(angle > PI)
@@ -18,7 +79,7 @@ void updateAngle(Arm& motor, int period)
 		motor.previous_angle = motor.angle;
 		motor.angle += 2.0 * PI * FRAME / static_cast<double>(period);
 	}
-	motor.angle = normalizedAngle(motor.angle);
+	//motor.angle = normalizedAngle(motor.angle);
 }
 //Using delta_time
 void updateAngle(Arm& motor, int period, int delta_time)
@@ -28,7 +89,7 @@ void updateAngle(Arm& motor, int period, int delta_time)
 		motor.previous_angle = motor.angle;
 		motor.angle += 2.0 * PI * delta_time / static_cast<double>(period);
 	}
-	motor.angle = normalizedAngle(motor.angle);
+	//motor.angle = normalizedAngle(motor.angle);
 }
 
 //Return 1 means a squash/ stretch occured, reverse!
@@ -108,7 +169,7 @@ bool updateArm(std::vector<Arm>& arms, int arm_index, double rod_length, int pre
 
 		double previous_delta_angle{ arms[arm_index].angle - arms[arm_index].previous_angle };
 
-		double momentum = 1.0;
+		double momentum = MOMENTUM;
 		//check which one makes a delta_angle closer the the last_delta_angle
 		if(std::abs(normalizedAngle(momentum * previous_delta_angle - delta_angle_1)) < std::abs(normalizedAngle(momentum * previous_delta_angle - delta_angle_2)))
 		{
@@ -123,7 +184,7 @@ bool updateArm(std::vector<Arm>& arms, int arm_index, double rod_length, int pre
 			arm_angle = new_angle_2;
 		}
 		arm_previous_angle = arms[arm_index].angle;
-		arm_angle = normalizedAngle(arm_angle + coord_sys_angle);
+		arm_angle += coord_sys_angle;
 
 		//Update any subsequent arms
 		for(int i{ 0 }; i < arms[arm_index].connected_arms.size(); ++i)
@@ -141,7 +202,10 @@ bool updateArm(std::vector<Arm>& arms, int arm_index, double rod_length, int pre
 	}
 }
 
-
+bool updateLink(std::vector<Link>& links, int link_index, double rod_length, std::vector<Arm>& arms, int preceding_arm_index, Vector_2d passthrough)
+{
+	return 1;
+}
 
 bool updateMotor(std::vector<Arm>& arms, int motor_index, int& period)
 {
@@ -183,4 +247,47 @@ bool updateMotor(std::vector<Arm>& arms, int motor_index, int& period, int delta
 	updateAngle(arms[motor_index], period);
 
 	return success;
+}
+
+void renderAndConnectArms(SDL_Renderer* renderer, std::vector<Arm>& arms, int arm_index, int preceding_arm_index, const Camera& camera, double screen_width, double screen_height, SDL_Color arm_color)
+{
+	Vector_2d preceding_arm_pos{ arms[preceding_arm_index].pos };
+	double preceding_arm_angle{ arms[preceding_arm_index].angle };
+	double preceding_arm_length{ arms[preceding_arm_index].length };
+	Vector_2d preceding_arm_end_pos{ preceding_arm_pos + polarToVector(preceding_arm_angle, preceding_arm_length) };
+
+	Vector_2d arm_pos{ arms[arm_index].pos };
+	double arm_angle{ arms[arm_index].angle };
+	double arm_length{ arms[arm_index].length };
+	Vector_2d arm_end_pos{ arm_pos + polarToVector(arm_angle, arm_length) };
+
+	SDL_SetRenderDrawColor(renderer, arm_color.r, arm_color.g, arm_color.b, arm_color.a);
+
+	Vector_2d pos1{};
+	Vector_2d pos2{};
+
+	pos1 = cameraTranformedPos(camera, screen_width, screen_height, preceding_arm_pos);
+	pos2 = cameraTranformedPos(camera, screen_width, screen_height, preceding_arm_end_pos);
+	SDL_RenderDrawLine(renderer, pos1.x, pos1.y, pos2.x, pos2.y);
+
+	pos1 = cameraTranformedPos(camera, screen_width, screen_height, arm_pos);
+	pos2 = cameraTranformedPos(camera, screen_width, screen_height, arm_end_pos);
+	SDL_RenderDrawLine(renderer, pos1.x, pos1.y, pos2.x, pos2.y);
+
+	pos1 = cameraTranformedPos(camera, screen_width, screen_height, arm_end_pos);
+	pos2 = cameraTranformedPos(camera, screen_width, screen_height, preceding_arm_end_pos);
+	SDL_RenderDrawLine(renderer, pos1.x, pos1.y, pos2.x, pos2.y);
+
+	for(int i{ 0 }; i < arms[arm_index].connected_arms.size(); ++i)
+	{
+		renderAndConnectArms(renderer, arms, arms[arm_index].connected_arms[i].index, arm_index, camera, screen_width, screen_height, arm_color);
+	}
+}
+
+void renderMotorAndConnectedArms(SDL_Renderer* renderer, std::vector<Arm>& arms, int motor_index, const Camera& camera, double screen_width, double screen_height, SDL_Color arm_color)
+{
+	for(int i{ 0 }; i < arms[motor_index].connected_arms.size(); ++i)
+	{
+		renderAndConnectArms(renderer, arms, arms[motor_index].connected_arms[i].index, motor_index, camera, screen_width, screen_height, arm_color);
+	}
 }

@@ -1,23 +1,22 @@
-﻿  main.cpp
-C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(105,21): warning C4244: 'initializing': conversion from 'Uint64' to 'int', possible loss of data
-C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(198,42): warning C4244: '=': conversion from 'Uint64' to 'int', possible loss of data
-C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(216,61): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(216,53): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(216,45): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(216,37): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(221,61): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(221,53): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(221,45): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(221,37): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(225,61): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(225,53): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(225,45): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(225,37): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(241,171): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(241,158): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(241,105): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(241,47): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(274,40): warning C4244: '=': conversion from 'Uint64' to 'int', possible loss of data
-C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(284,42): warning C4244: '=': conversion from 'Uint64' to 'int', possible loss of data
-C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\main.cpp(297): warning C4715: 'SDL_main': not all control paths return a value
+﻿  LinkageSim.cpp
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\LinkageSim.cpp(45,88): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\LinkageSim.cpp(45,73): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\LinkageSim.cpp(45,58): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\LinkageSim.cpp(45,43): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\LinkageSim.cpp(62,88): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\LinkageSim.cpp(62,73): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\LinkageSim.cpp(62,58): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\LinkageSim.cpp(62,43): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\LinkageSim.cpp(271,59): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\LinkageSim.cpp(271,51): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\LinkageSim.cpp(271,43): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\LinkageSim.cpp(271,35): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\LinkageSim.cpp(275,59): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\LinkageSim.cpp(275,51): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\LinkageSim.cpp(275,43): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\LinkageSim.cpp(275,35): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\LinkageSim.cpp(279,59): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\LinkageSim.cpp(279,51): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\LinkageSim.cpp(279,43): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
+C:\Users\adria\Desktop\VS\LinkageSim\LinkageSim\LinkageSim.cpp(279,35): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
   LinkageSim.vcxproj -> C:\Users\adria\Desktop\VS\LinkageSim\x64\Debug\LinkageSim.exe
