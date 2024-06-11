@@ -27,6 +27,8 @@ bool operator!=(const Vector_2d& v1, const Vector_2d& v2);
 
 double distanceSqr(double x1, double y1, double x2 = 0.0, double y2 = 0.0);
 double distanceSqr(Vector_2d v1, Vector_2d v2 = Vector_2d(0.0, 0.0));
+double distance(double x1, double y1, double x2 = 0.0, double y2 = 0.0);
+double distance(Vector_2d v1, Vector_2d v2 = Vector_2d(0.0, 0.0));
 double lengthSqr(double x, double y);
 double lengthSqr(Vector_2d v);
 double length(Vector_2d v);
@@ -48,8 +50,14 @@ Vector_2d projectVector(Vector_2d v1, Vector_2d v2);
 
 //return a vector rotated by angle that another vector is making with the x axis
 Vector_2d rotatedVector(const Vector_2d& vector, Vector_2d angle);
+Vector_2d rotatedVectorBackwards(const Vector_2d& vector, Vector_2d angle);
 Vector_2d rotatedVectorByNormalized(const Vector_2d& vector, const Vector_2d& normalized_angle);
 
+Vector_2d rotatedVector(const Vector_2d& vector, double angle);
+Vector_2d rotatedVectorBackwards(const Vector_2d& vector, double angle);
+
+
+Vector_2d polarToVector(double angle, double length=1);
 
 
 

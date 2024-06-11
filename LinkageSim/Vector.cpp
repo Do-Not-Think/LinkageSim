@@ -65,6 +65,14 @@ double distanceSqr(Vector_2d v1, Vector_2d v2)
 {
 	return distanceSqr(v1.x, v1.y, v2.x, v2.y);
 }
+double distance(double x1, double y1, double x2, double y2)
+{
+	return std::sqrt(distanceSqr(x1, y1, x2, y2));
+}
+double distance(Vector_2d v1, Vector_2d v2)
+{
+	return std::sqrt(distanceSqr(v1, v2));
+}
 double lengthSqr(double x, double y)
 {
 	return distanceSqr(x, y);
@@ -142,6 +150,17 @@ Vector_2d rotatedVector(const Vector_2d& vector, Vector_2d angle)
 
 	return rotated_vector;
 }
+Vector_2d rotatedVectorBackwards(const Vector_2d& vector, Vector_2d angle)
+{
+	Vector_2d rotated_vector{};
+
+	angle = normalizedVector(angle);
+
+	rotated_vector.x =  angle.x * vector.x + angle.y * vector.y;
+	rotated_vector.y = -angle.y * vector.x + angle.x * vector.y;
+
+	return rotated_vector;
+}
 Vector_2d rotatedVectorByNormalized(const Vector_2d& vector, const Vector_2d& normalized_angle)
 {
 	Vector_2d rotated_vector{};
@@ -152,7 +171,36 @@ Vector_2d rotatedVectorByNormalized(const Vector_2d& vector, const Vector_2d& no
 	return rotated_vector;
 }
 
+Vector_2d rotatedVector(const Vector_2d& vector, double angle)
+{
+	Vector_2d rotated_vector{};
 
+	rotated_vector.x = std::cos(angle) * vector.x - std::sin(angle) * vector.y;
+	rotated_vector.y = std::sin(angle) * vector.x + std::cos(angle) * vector.y;
+
+	return rotated_vector;
+}
+Vector_2d rotatedVectorBackwards(const Vector_2d& vector, double angle)
+{
+	Vector_2d rotated_vector{};
+
+	rotated_vector.x =  std::cos(angle) * vector.x + std::sin(angle) * vector.y;
+	rotated_vector.y = -std::sin(angle) * vector.x + std::cos(angle) * vector.y;
+
+	return rotated_vector;
+}
+
+
+
+
+Vector_2d polarToVector(double angle, double length)
+{
+	Vector_2d polar{};
+	polar.x = std::cos(angle) * length;
+	polar.y = std::sin(angle) * length;
+
+	return polar;
+}
 
 
 

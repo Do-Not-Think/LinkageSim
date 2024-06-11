@@ -1,32 +1,25 @@
 #pragma once
+#include <cmath>
 #include <vector>
 
 #include "Vector.h"
 #include "MathConsts.h"
 
-struct Index_Distance
+enum MotorState;
+
+struct Index_RodLength
 {
-	unsigned int index;
-	double distance; //connecting arm/ rod length
+	int index;
+	double rod_length;
 };
 
 struct Arm
 {
-	std::vector<Index_Distance> connected_arms;
+	std::vector<Index_RodLength> connected_arms;
 	Vector_2d pos{};
-	double arm_length{};
+	double length{};
 	double angle{};
-	double displaced_angle{};
+	double last_delta_angle{};
 };
 
-struct Motor
-{
-	std::vector<Index_Distance> connected_arms;
-	Vector_2d pos{};
-	double arm_length{};
-	double angle{};
-	double period{};
-	bool reversed{ false };
-};
-
-bool updateMotors(std::vector<Motor>& motors, std::vector<Arm>& arms, int delta_time);
+bool updateMotors(std::vector<Arm>& motors, std::vector<Arm>& arms, int period, int delta_time);

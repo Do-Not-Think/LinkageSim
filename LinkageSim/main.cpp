@@ -92,21 +92,21 @@ int main(int argc, char** argv)
 		
 		//Linkage Objects
 		std::vector<Arm> arms{};
-		std::vector<Motor> motors{};
+		std::vector<Arm> motors{};
 		double scale = 2;
 
 		Arm arm0{};
-		arm0.pos = Vector_2d{ scale * ( 60 + 2 * 20), 200 };
+		arm0.pos = Vector_2d{ scale * (60 + 2 * 20), 200 };
 		arm0.angle = -PI / 2.0;
-		arm0.arm_length = scale * 2.5 * 20;
+		arm0.length = scale * 2.5 * 20;
 		arms.push_back(arm0);
 
-		Motor motor0{};
+		Arm motor0{};
 		motor0.pos = Vector_2d{ scale * 60, 200 };
-		motor0.arm_length = scale * 20;
+		motor0.length = scale * 20;
 		motor0.angle = -PI / 2.0;
-		motor0.period = 3 * ONE_SECOND_MOTOR_PERIOD;
-		motor0.connected_arms.push_back(Index_Distance{ 0, scale * 2.5 * 20 });
+		int motor0_period = 30 * ONE_SECOND_MOTOR_PERIOD;
+		motor0.connected_arms.push_back(Index_RodLength{ 0, 50 });//     scale * 2.5 * 20 });
 		motors.push_back(motor0);
 
 
@@ -294,30 +294,40 @@ int main(int argc, char** argv)
 			}*/
 			
 			
-			updateMotors(motors, arms, delta_time);
+			updateMotors(motors, arms, motor0_period, delta_time);
 			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xff);
-			//motor0 arm
-			SDL_RenderDrawLine(renderer, motors[0].pos.x, motors[0].pos.y, motors[0].pos.x + std::cos(motors[0].angle) * motors[0].arm_length, motors[0].pos.y + std::sin(motors[0].angle) * motors[0].arm_length);
-			//rod connecting motor0 and arm0 
-			SDL_RenderDrawLine(renderer, motors[0].pos.x + std::cos(motors[0].angle) * motors[0].arm_length, motors[0].pos.y + std::sin(motors[0].angle) * motors[0].arm_length, arms[0].pos.x + std::cos(arms[0].angle) * arms[0].arm_length, arms[0].pos.y + std::sin(arms[0].angle) * arms[0].arm_length);
-			//arm0 arm
-			SDL_RenderDrawLine(renderer, arms[0].pos.x, arms[0].pos.y, arms[0].pos.x + std::cos(arms[0].angle) * arms[0].arm_length, arms[0].pos.y + std::sin(arms[0].angle) * arms[0].arm_length);
 			
+			Vector_2d pos1{};
+			Vector_2d pos2{};
+			
+			//motor0 arm
+			pos1 = motors[0].pos;
+			pos2 = motors[0].pos + polarToVector(motors[0].angle, motors[0].length);
+			SDL_RenderDrawLine(renderer, pos1.x, pos1.y, pos2.x, pos2.y);
+			//rod connecting motor0 and arm0 
+			pos1 = pos2;
+			pos2 = arms[0].pos + polarToVector(arms[0].angle, arms[0].length);
+			SDL_RenderDrawLine(renderer, pos1.x, pos1.y, pos2.x, pos2.y);
+			//arm0 arm
+			pos1 = pos2;
+			pos2 = arms[0].pos;
+			SDL_RenderDrawLine(renderer, pos1.x, pos1.y, pos2.x, pos2.y);
+
 
 			Vector_2d connecting_rod;
-			connecting_rod.x = arms[0].pos.x + std::cos(arms[0].angle) * arms[0].arm_length;
-			connecting_rod.y = arms[0].pos.y + std::sin(arms[0].angle) * arms[0].arm_length;
-			connecting_rod.x -= motors[0].pos.x + std::cos(motors[0].angle) * motors[0].arm_length;
-			connecting_rod.y -= motors[0].pos.y + std::sin(motors[0].angle) * motors[0].arm_length;
+			connecting_rod.x = arms[0].pos.x + std::cos(arms[0].angle) * arms[0].length;
+			connecting_rod.y = arms[0].pos.y + std::sin(arms[0].angle) * arms[0].length;
+			connecting_rod.x -= motors[0].pos.x + std::cos(motors[0].angle) * motors[0].length;
+			connecting_rod.y -= motors[0].pos.y + std::sin(motors[0].angle) * motors[0].length;
 
 			connecting_rod *= 2;
 
 			Vector_2d final_pos;
-			final_pos.x = connecting_rod.x + motors[0].pos.x + std::cos(motors[0].angle) * motors[0].arm_length;
-			final_pos.y = connecting_rod.y + motors[0].pos.y + std::sin(motors[0].angle) * motors[0].arm_length;
+			final_pos.x = connecting_rod.x + motors[0].pos.x + std::cos(motors[0].angle) * motors[0].length;
+			final_pos.y = connecting_rod.y + motors[0].pos.y + std::sin(motors[0].angle) * motors[0].length;
 
 
-			SDL_RenderDrawLine(renderer, motors[0].pos.x + std::cos(motors[0].angle) * motors[0].arm_length, motors[0].pos.y + std::sin(motors[0].angle) * motors[0].arm_length, final_pos.x, final_pos.y);
+			SDL_RenderDrawLine(renderer, motors[0].pos.x + std::cos(motors[0].angle) * motors[0].length, motors[0].pos.y + std::sin(motors[0].angle) * motors[0].length, final_pos.x, final_pos.y);
 			
 			SDL_SetRenderDrawColor(renderer, 0xff, 0, 0, 0xff);
 			
