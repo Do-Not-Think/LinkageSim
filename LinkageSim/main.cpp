@@ -1,15 +1,19 @@
 //#include <cstdio>
+#include <cmath>
 #include <string>
+#include <vector>
 
+#include "LinkageObjects.h"
+#include "MathConsts.h"
 #include "SDLEssentials.h"
 #include "Vector.h"
-
 
 const char* TITLE{ "LinkageSim" };
 int screen_width{ 640 };
 int screen_height{ 480 };
 const Uint64 TICKS_PER_SECOND{ SDL_GetPerformanceFrequency() };
-const Uint64 BLINKING_TIME{ static_cast<Uint64>(TICKS_PER_SECOND * .5) };
+const int ONE_SECOND_MOTOR_PERIOD{ static_cast<int>(TICKS_PER_SECOND) }; //Period in tick
+const int FRAME_COUNT{ 100 };                                                                                                                                     
 
 enum KeysType
 {
@@ -57,9 +61,10 @@ int main(int argc, char** argv)
 		double fps_sum{ 0.0 };
 		double fps_avg{ 0.0 };
 		int fps_sum_i{ 1 };
+
 		int start_time{ 0 };
 		int end_time{ 0 };
-
+		int delta_time{ 0 };
 
 		//Text:
 		//string, path, size, color, texture
@@ -69,8 +74,8 @@ int main(int argc, char** argv)
 
 		int font_size{ 20 };
 
-		SDL_Color text_color{ 0xff, 0xff, 0xff, 0xff };
-		SDL_Color background_color{ 0x0, 0x0, 0x0, 0xff };
+		SDL_Color text_color{ 0x00, 0x00, 0x00, 0xff };
+		SDL_Color background_color{ 0xff, 0xff, 0xff, 0xff };
 
 		Texture text_texture;
 
@@ -81,6 +86,35 @@ int main(int argc, char** argv)
 		int mouse_x{ 0 }, mouse_y{ 0 };
 
 
+		bool creating_motor_pos{ false };
+		bool creating_motor_arm{ false };
+
+		
+		//Linkage Objects
+		std::vector<Arm> arms{};
+		std::vector<Motor> motors{};
+		double scale = 2;
+
+		Arm arm0{};
+		arm0.pos = Vector_2d{ scale * ( 60 + 2 * 20), 200 };
+		arm0.angle = -PI / 2.0;
+		arm0.arm_length = scale * 2.5 * 20;
+		arms.push_back(arm0);
+
+		Motor motor0{};
+		motor0.pos = Vector_2d{ scale * 60, 200 };
+		motor0.arm_length = scale * 20;
+		motor0.angle = -PI / 2.0;
+		motor0.period = 3 * ONE_SECOND_MOTOR_PERIOD;
+		motor0.connected_arms.push_back(Index_Distance{ 0, scale * 2.5 * 20 });
+		motors.push_back(motor0);
+
+
+		int ticks{ 1 };
+		int every_nth_tick{ 100 };
+		int num_points{ 100 };
+		int point_i{ 0 };
+		std::vector<Vector_2d> points;
 
 
 		bool keysPressed{ false };
@@ -172,15 +206,159 @@ int main(int argc, char** argv)
 
 			SDL_SetRenderDrawColor(renderer, background_color.r, background_color.g, background_color.b, background_color.a);
 			SDL_RenderClear(renderer);
-			 
+
+
+			//for fun
+			/*static int i{ 0 };
+
+			++i;
+			if(i >= 10)
+			{
+				background_color.r += 3;
+				background_color.g += 5;
+				background_color.b += -2;
+				i = 0;
+			}*/
+			
+			/*
+			if(creating_motor_pos || creating_motor_arm)
+			{
+				//Inversion of the background color
+				Uint8 r, g, b;
+				SDL_GetRenderDrawColor(renderer, &r, &g, &b, NULL);
+				r = 0xff - r;
+				g = 0xff - g;
+				b = 0xff - b;
+				SDL_SetRenderDrawColor(renderer, r, g, b, 0xff);
+				SDL_Rect rect;
+				rect.w = 20;
+				rect.h = 20;
+				rect.x = mouse_x - rect.w / 2;
+				rect.y = mouse_y - rect.h / 2;
+
+				SDL_RenderFillRect(renderer, &rect);
+			}
+			if(mouse[MOUSE_LEFT].down && creating_motor_pos)
+			{
+				creating_motor_pos = false;
+				creating_motor_arm = true;
+			}
+			if(mouse[MOUSE_LEFT].down && !creating_motor_arm)
+			{
+				creating_motor_pos = true;
+			}
+			if(mouse[MOUSE_LEFT].up)
+			{
+				if(creating_motor_pos)
+				{
+					;
+				}
+				else if(creating_motor_arm)
+				{
+					creating_motor_arm = false;
+				
+				}
+			}
+			*/
+			/*
+			for(auto& motor : motors)
+			{
+				std::printf("Motor.pos\t\t %f, %f\n", motor.pos.x, motor.pos.y);
+				std::printf("Motor.angle\t\t %f\n", motor.angle * 180 / PI);
+				std::printf("Motor.radius\t\t %f\n", motor.radius);
+				std::printf("Motor.period\t\t %f\n\n", motor.period);
+				
+				Uint8 r, g, b;
+				r = 0xff - background_color.r;
+				g = 0xff - background_color.g;
+				b = 0xff - background_color.b;
+				SDL_Rect rect;
+				rect.w = 20;
+				rect.h = 20;
+				rect.x = motor.pos.x - rect.w / 2;
+				rect.y = motor.pos.y - rect.h / 2;
+				SDL_SetRenderDrawColor(renderer, r, g, b, 0xff);
+				SDL_RenderFillRect(renderer, &rect);
+				SDL_SetRenderDrawColor(renderer, background_color.r, background_color.g, background_color.b, background_color.a);
+				
+
+				rect.w = 20;
+				rect.h = 20;
+				rect.x = motor.pos.x - rect.w / 2 + toCartesianX(motor.radius, motor.angle);
+				rect.y = motor.pos.y - rect.h / 2 + toCartesianY(motor.radius, motor.angle);
+				SDL_SetRenderDrawColor(renderer, r, g, b, 0xff);
+				SDL_RenderFillRect(renderer, &rect);
+				SDL_SetRenderDrawColor(renderer, background_color.r, background_color.g, background_color.b, background_color.a);
+
+				updateMotor(motor, delta_time);
+			}*/
+			
+			
+			updateMotors(motors, arms, delta_time);
+			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xff);
+			//motor0 arm
+			SDL_RenderDrawLine(renderer, motors[0].pos.x, motors[0].pos.y, motors[0].pos.x + std::cos(motors[0].angle) * motors[0].arm_length, motors[0].pos.y + std::sin(motors[0].angle) * motors[0].arm_length);
+			//rod connecting motor0 and arm0 
+			SDL_RenderDrawLine(renderer, motors[0].pos.x + std::cos(motors[0].angle) * motors[0].arm_length, motors[0].pos.y + std::sin(motors[0].angle) * motors[0].arm_length, arms[0].pos.x + std::cos(arms[0].angle) * arms[0].arm_length, arms[0].pos.y + std::sin(arms[0].angle) * arms[0].arm_length);
+			//arm0 arm
+			SDL_RenderDrawLine(renderer, arms[0].pos.x, arms[0].pos.y, arms[0].pos.x + std::cos(arms[0].angle) * arms[0].arm_length, arms[0].pos.y + std::sin(arms[0].angle) * arms[0].arm_length);
+			
+
+			Vector_2d connecting_rod;
+			connecting_rod.x = arms[0].pos.x + std::cos(arms[0].angle) * arms[0].arm_length;
+			connecting_rod.y = arms[0].pos.y + std::sin(arms[0].angle) * arms[0].arm_length;
+			connecting_rod.x -= motors[0].pos.x + std::cos(motors[0].angle) * motors[0].arm_length;
+			connecting_rod.y -= motors[0].pos.y + std::sin(motors[0].angle) * motors[0].arm_length;
+
+			connecting_rod *= 2;
+
+			Vector_2d final_pos;
+			final_pos.x = connecting_rod.x + motors[0].pos.x + std::cos(motors[0].angle) * motors[0].arm_length;
+			final_pos.y = connecting_rod.y + motors[0].pos.y + std::sin(motors[0].angle) * motors[0].arm_length;
+
+
+			SDL_RenderDrawLine(renderer, motors[0].pos.x + std::cos(motors[0].angle) * motors[0].arm_length, motors[0].pos.y + std::sin(motors[0].angle) * motors[0].arm_length, final_pos.x, final_pos.y);
+			
+			SDL_SetRenderDrawColor(renderer, 0xff, 0, 0, 0xff);
+			
+			if(ticks >= every_nth_tick)
+			{
+				if(points.size() < num_points)
+				{
+					points.push_back(final_pos);
+					++point_i;
+				}
+				else
+				{
+					if(point_i < num_points)
+					{
+						points[point_i] = final_pos;
+					}
+					else
+					{
+						point_i = 0;
+					}
+				}
+				ticks = 1;
+			}
+			++ticks;
+
+
+			for(auto& point : points)
+			{
+				SDL_RenderDrawPoint(renderer, point.x, point.y);
+			}
+
+
+			SDL_SetRenderDrawColor(renderer, background_color.r, background_color.g, background_color.b, background_color.a);
+			
 			text_texture.loadFromRenderedText(renderer, text_font, text, text_color, background_color);
 
 			text_texture.render(renderer, 0, 0, NULL);
 
-
 			fps_sum += fps;
 			++fps_sum_i;
-			if(fps_sum_i > 100)
+			if(fps_sum_i > FRAME_COUNT)
 			{
 				 fps_avg = fps_sum / 100.0;
 				 text = std::to_string(fps_avg);
@@ -191,6 +369,8 @@ int main(int argc, char** argv)
 			
 			SDL_RenderPresent(renderer);
 
+			
+
 			resetButtonStates(mouse, MAX_MOUSEBUTTONS);
 			resetButtonStates(keyboard, MAX_KEYS);
 			keysPressed = false;
@@ -200,7 +380,7 @@ int main(int argc, char** argv)
 
 			end_time = SDL_GetPerformanceCounter();
 
-			int delta_time{ static_cast<int>(end_time - start_time) };
+			delta_time = static_cast<int>(end_time - start_time);
 			fps = TICKS_PER_SECOND / double(delta_time);
 		}
 

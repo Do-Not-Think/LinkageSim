@@ -29,24 +29,26 @@ double distanceSqr(double x1, double y1, double x2 = 0.0, double y2 = 0.0);
 double distanceSqr(Vector_2d v1, Vector_2d v2 = Vector_2d(0.0, 0.0));
 double lengthSqr(double x, double y);
 double lengthSqr(Vector_2d v);
+double length(Vector_2d v);
+double length(double x, double y);
 double dot(double x1, double y1, double x2, double y2);
 double dot(Vector_2d v1, Vector_2d v2);
 double cross(double x1, double y1, double x2, double y2);
 double cross(Vector_2d v1, Vector_2d v2);
-double length(Vector_2d v);
+
 
 
 //return a 90 deegres counterclockwise vector
 Vector_2d getPerpendicularVector(Vector_2d vector);
-double rsqrt(double number);
-Vector_2d normalizeVector(Vector_2d& v);
+//double rsqrt(double number);
+Vector_2d normalizedVector(Vector_2d& v);
 Vector_2d projectVector(Vector_2d v1, Vector_2d v2);
 
 
 
-
-
-
+//return a vector rotated by angle that another vector is making with the x axis
+Vector_2d rotatedVector(const Vector_2d& vector, Vector_2d angle);
+Vector_2d rotatedVectorByNormalized(const Vector_2d& vector, const Vector_2d& normalized_angle);
 
 
 

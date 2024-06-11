@@ -18,18 +18,27 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Coolsole\Coolsole\SDLEssentials.cpp">
+    <ClCompile Include="LinkageObjects.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Coolsole\Coolsole\Vector.cpp">
+    <ClCompile Include="SDLEssentials.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Coolsole\Coolsole\SDLEssentials.h">
+    <ClInclude Include="LinkageObjects.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Coolsole\Coolsole\Vector.h">
+    <ClInclude Include="MathConsts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SDLEssentials.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

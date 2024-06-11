@@ -133,13 +133,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Coolsole\Coolsole\SDLEssentials.cpp" />
-    <ClCompile Include="..\..\Coolsole\Coolsole\Vector.cpp" />
+    <ClCompile Include="LinkageObjects.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SDLEssentials.cpp" />
+    <ClCompile Include="Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Coolsole\Coolsole\SDLEssentials.h" />
-    <ClInclude Include="..\..\Coolsole\Coolsole\Vector.h" />
+    <ClInclude Include="LinkageObjects.h" />
+    <ClInclude Include="MathConsts.h" />
+    <ClInclude Include="SDLEssentials.h" />
+    <ClInclude Include="Vector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

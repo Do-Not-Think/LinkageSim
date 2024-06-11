@@ -73,6 +73,14 @@ double lengthSqr(Vector_2d v)
 {
 	return distanceSqr(v);
 }
+double length(Vector_2d v)
+{
+	return std::sqrt(lengthSqr(v));
+}
+double length(double x, double y)
+{
+	return std::sqrt(lengthSqr(x, y));
+}
 double dot(double x1, double y1, double x2, double y2)
 {
 	return x1 * x2 + y1 * y2;
@@ -89,10 +97,7 @@ double cross(Vector_2d v1, Vector_2d v2)
 {
 	return cross(v1.x, v1.y, v2.x, v2.y);
 }
-double length(Vector_2d v)
-{
-	return std::sqrt(lengthSqr(v));
-}
+
 
 
 //return a 90 deegres counterclockwise vector
@@ -100,6 +105,7 @@ Vector_2d getPerpendicularVector(Vector_2d vector)
 {
 	return Vector_2d(-vector.y, vector.x);
 }
+/*It's fucking slower than 1.0 / std::sqrt()
 double rsqrt(double number)
 {
 	double y = number;
@@ -111,21 +117,40 @@ double rsqrt(double number)
 	y = y * (1.5 - (x2 * y * y));   // 1st iteration
 	//      y  = y * ( 1.5 - ( x2 * y * y ) );   // 2nd iteration, this can be removed
 	return y;
-}
-Vector_2d normalizeVector(Vector_2d& v)
+}*/
+Vector_2d normalizedVector(Vector_2d& v)
 {
-	return v * rsqrt(lengthSqr(v));
+	return v * 1.0 / std::sqrt(lengthSqr(v));
 }
 Vector_2d projectVector(Vector_2d v1, Vector_2d v2)
 {
-	v2 = normalizeVector(v2);
+	v2 = normalizedVector(v2);
 	return dot(v1, v2) * v2;
 }
 
 
 
+//return a vector rotated by angle that another vector is making with the x axis
+Vector_2d rotatedVector(const Vector_2d& vector, Vector_2d angle)
+{
+	Vector_2d rotated_vector{};
 
+	angle = normalizedVector(angle);
 
+	rotated_vector.x = angle.x * vector.x - angle.y * vector.y;
+	rotated_vector.y = angle.y * vector.x + angle.x * vector.y;
+
+	return rotated_vector;
+}
+Vector_2d rotatedVectorByNormalized(const Vector_2d& vector, const Vector_2d& normalized_angle)
+{
+	Vector_2d rotated_vector{};
+
+	rotated_vector.x = normalized_angle.x * vector.x - normalized_angle.y * vector.y;
+	rotated_vector.y = normalized_angle.y * vector.x + normalized_angle.x * vector.y;
+
+	return rotated_vector;
+}
 
 
 
@@ -209,3 +234,6 @@ Vector_3d cross(const Vector_3d& v1, const Vector_3d& v2)
 {
 	return Vector_3d{ v1.y * v2.z - v1.z * v2.y, v1.x * v2.z - v1.z * v2.x, v1.x * v2.y - v1.y * v2.x };
 }
+
+
+

@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-//#include <cstdio>
+#include <cstdio>
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_ttf.h"
@@ -16,8 +16,8 @@ public:
 
 	bool loadFromFile(SDL_Renderer* renderer, std::string path);
 #if defined(SDL_TTF_MAJOR_VERSION)
-	bool loadFromRenderedText(SDL_Renderer* renderer, TTF_Font* font, std::string text, SDL_Color textColor);
-	bool loadFromRenderedText(SDL_Renderer* renderer, TTF_Font* font, std::string text, SDL_Color textColor, SDL_Color backgroundColor);
+	bool loadFromRenderedText(SDL_Renderer* renderer, TTF_Font* font, std::string text, SDL_Color text_color);
+	bool loadFromRenderedText(SDL_Renderer* renderer, TTF_Font* font, std::string text, SDL_Color text_color, SDL_Color background_color);
 	bool renderTextWrapped(SDL_Renderer* renderer, TTF_Font* font, std::string text, SDL_Color text_color, SDL_Color background_color, int x=0, int y=0);
 #endif
 	bool createFromSurface(SDL_Renderer* renderer, SDL_Surface* surface);
